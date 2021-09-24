@@ -21,15 +21,15 @@ enum proxy_side_type {
 	DEST,
 };
 
-typedef int (*proxy_connecting_fn)(struct proxy_side* side);
+typedef int (*proxy_connecting_fn)(struct proxy_side *side);
 
-#define TO_PROXY_SIDE(proxy_side_data) \
+#define TO_PROXY_SIDE(proxy_side_data)                                         \
 	container_of(proxy_side_data, struct proxy_side, proxy_size_data);
 
 struct proxy_side {
-	void* proxy_side_data;
+	void *proxy_side_data;
 	enum proxy_side_type side;
-	char* description;		// like "ipv4[1.2.3.4:3234]
+	char *description; // like "ipv4[1.2.3.4:3234]
 	int fd;
 	enum proxy_state state;
 	proxy_connecting_fn connecting_callback;

@@ -10,12 +10,10 @@
 #ifndef PROXY_STRUCT_HELPERS_H
 #define PROXY_STRUCT_HELPERS_H
 
-struct proxy_connection* proxy_side_get_connection(
-	struct proxy_side *side);
+struct proxy_connection *proxy_side_get_connection(struct proxy_side *side);
 
-struct proxy_side* proxy_side_get_other_side(
-	struct proxy_side *side);
+struct proxy_side *proxy_side_get_other_side(struct proxy_side *side);
 
-struct proxy_side* proxy_data_get_side(void *data);
+struct proxy_side *proxy_data_get_side(void *data);
 
 #endif /* PROXY_STRUCT_HELPERS_H */

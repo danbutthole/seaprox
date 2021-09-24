@@ -11,16 +11,16 @@
 
 struct proxy_connection;
 
-#define TO_PROXY_CONNECTION_FROM_SOURCE(source) \
+#define TO_PROXY_CONNECTION_FROM_SOURCE(source)                                \
 	container_of(source, struct proxy_connection, source)
 
-#define TO_PROXY_CONNECTION_FROM_DEST(dest) \
+#define TO_PROXY_CONNECTION_FROM_DEST(dest)                                    \
 	container_of(dest, struct proxy_connection, dest)
 
 struct proxy_connection {
-	char* description;	/* Like "http[<src>-><dst>]" */
-	struct proxy_side* source;
-	struct proxy_side* dest;
+	char *description; /* Like "http[<src>-><dst>]" */
+	struct proxy_side *source;
+	struct proxy_side *dest;
 };
 
 #endif /* PROXY_CONNECTION_H */

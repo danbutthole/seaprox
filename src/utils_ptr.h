@@ -13,8 +13,10 @@
  *       take this into consideration when copied this code for your
  *       own purposes. For the purpose of seaprox, this is OK.
  */
-#define container_of(ptr, type, member) ({				\
-	void *__mptr = (void *)(ptr);					\
-	((type *)(__mptr - offsetof(type, member))) })
+#define container_of(ptr, type, member)                                        \
+	({                                                                     \
+		void *__mptr = (void *)(ptr);                                  \
+		((type *)(__mptr - offsetof(type, member)))                    \
+	})
 
 #endif /* UTIL_PTR_H */
