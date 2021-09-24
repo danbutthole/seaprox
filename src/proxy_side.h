@@ -28,7 +28,7 @@ typedef int (*proxy_connecting_fn)(struct proxy_side* side);
 
 struct proxy_side {
 	void* proxy_side_data;
-	struct proxy_side_type side;
+	enum proxy_side_type side;
 	char* description;		// like "ipv4[1.2.3.4:3234]
 	int fd;
 	enum proxy_state state;

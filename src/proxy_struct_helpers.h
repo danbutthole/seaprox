@@ -18,4 +18,4 @@ struct proxy_side* proxy_side_get_other_side(
 
 struct proxy_side* proxy_data_get_side(void *data);
 
-#define /* PROXY_STRUCT_HELPERS_H */
+#endif /* PROXY_STRUCT_HELPERS_H */
