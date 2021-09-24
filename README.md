@@ -97,6 +97,17 @@ objects, and perform a basic search for the file descriptor in the
 are `struct proxy_side` objects) include a `epoll_callback` callback
 for handling the events.
 
+## Connection limits
+It is foreseen that an invocation of the proxy (of what is provided
+or by a wrapper/implementation) that there will simply be a number of
+simple limits. These limits will be:
+ * `MAX_NUM_CONNECTIONS`
+ * `NUM_THREADS`
+
+With these pre-defined at invocation time (or compile time), the
+approach will be to simply allocate the structures as arrays. Then
+lookups will simply be linear lookups.
+
 ## Optionally asynchronous connections
 
 ```
