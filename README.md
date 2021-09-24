@@ -43,5 +43,47 @@ specific abstractions to be handled separately in smaller or problem
 specific code bases.
 
 # Design
-## Structs
+## Structures, definitions and enumerations
+
+```C
+struct proxy_connection {
+	char* description;	// Like "http[<src>-><dst>]"
+	struct proxy_side* source;
+	struct proxy_side* dest;
+};
+
+enum proxy_state {
+	IDLE,
+	CONNECTING,
+	CONNECTED,
+};
+
+enum proxy_side_type {
+	SOURCE,
+	DEST,
+};
+
+typedef int (*proxy_connecting_fn)(struct proxy_side* side);
+
+struct proxy_side {
+	void* proxy_side_data;
+	struct proxy_side_type side;
+	char* description;		// like "ipv4[1.2.3.4:3234]
+	int fd;
+	enum proxy_state state;
+	proxy_connecting_fn connecting_callback;
+};
+
+#define TO_PROXY_SIDE(proxy_data_obj) ...
+#define TO_PROXY_CONNECTION_FROM_SOURCE(proxy_source_obj) ...
+#define TO_PROXY_CONNECTION_FROM_DEST(proxy_dest_obj) ...
+
+struct proxy_connection* proxy_side_get_connection(
+	struct proxy_side *side);
+
+struct proxy_side* proxy_side_get_other_side(
+	struct proxy_side *side);
+
+struct proxy_side* proxy_data_get_side(void *data);
+```
 
