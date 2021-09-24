@@ -64,6 +64,8 @@ enum proxy_side_type {
 };
 
 typedef int (*proxy_connecting_fn)(struct proxy_side* side);
+typedef int (*epoll_handler_fn)(struct proxy_side* side
+	uint32_t events);
 
 struct proxy_side {
 	void* proxy_side_data;
@@ -72,6 +74,7 @@ struct proxy_side {
 	int fd;
 	enum proxy_state state;
 	proxy_connecting_fn connecting_callback;
+	epoll_handler_fn epoll_callback;
 };
 
 #define TO_PROXY_SIDE(proxy_data_obj) ...
@@ -86,6 +89,13 @@ struct proxy_side* proxy_side_get_other_side(
 
 struct proxy_side* proxy_data_get_side(void *data);
 ```
+
+## epoll handling
+Epoll handling will use a list (or array) of `struct proxy_connection`
+objects, and perform a basic search for the file descriptor in the
+`source` and `dest` objects. The `source` and `dest` objects (which
+are `struct proxy_side` objects) include a `epoll_callback` callback
+for handling the events.
 
 ## Optionally asynchronous connections
 

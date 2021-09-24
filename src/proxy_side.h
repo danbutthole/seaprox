@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+#include <stdint.h>
+
 #include "utils_ptr.h"
 
 #ifndef PROXY_SIDE_H
@@ -22,6 +24,7 @@ enum proxy_side_type {
 };
 
 typedef int (*proxy_connecting_fn)(struct proxy_side *side);
+typedef int (*epoll_handler_fn)(struct proxy_side *side, uint32_t events);
 
 #define TO_PROXY_SIDE(proxy_side_data)                                         \
 	container_of(proxy_side_data, struct proxy_side, proxy_size_data);
@@ -33,6 +36,7 @@ struct proxy_side {
 	int fd;
 	enum proxy_state state;
 	proxy_connecting_fn connecting_callback;
+	epoll_handler_fn epoll_callback;
 };
 
 #endif /* PROXY_SIDE_H */
