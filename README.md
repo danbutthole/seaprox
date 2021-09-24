@@ -87,3 +87,40 @@ struct proxy_side* proxy_side_get_other_side(
 struct proxy_side* proxy_data_get_side(void *data);
 ```
 
+## Optionally asynchronous connections
+
+```
+accept -> proto stuff -> |connect| -> connected
+
+connect:
+ - setup dest fd
+ - setup proxy connection struct
+ - call seaproxy_connect(eventfd, source_fd, dest_fd)
+
+seaproxy_connect
+ - in program
+   - seaproxy_socket_connect
+ - with external callback
+   - seaproxy_external_connect
+     - this is done to allow name resolution and connect to be done
+       in seperate thread to allow for maximum concurrency
+     - call external callback
+     - external callback code notifies with appropriate result
+ - either
+   - notify eventfd with (dest_fd * NUM_CONNECTION_FAIL_REASONS) if
+     successful, and +CONNECTION_FAIL_REASON if failed
+
+seaproxy_socket_connect:
+ - name resolution etc
+ - save and override dest_fd handler callback function
+ - make fd non-block
+ - do socket connect
+ - wait for writable event
+   - notify eventfd of destfd
+ - de-override dest_fd handler callback function
+
+CONNECTION_FAIL_REASON's:
+ - name resolution failure
+ - connection refused
+ - other
+```
