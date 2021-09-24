@@ -24,12 +24,7 @@ enum proxy_side_type {
 typedef int (*proxy_connecting_fn)(struct proxy_side* side);
 
 #define TO_PROXY_SIDE(proxy_side_data) \
-    container_of(proxy_side_data, struct proxy_side, proxy_size_data);
-
-struct proxy_side* proxy_side_get_other_side(
-	struct proxy_side *side);
-
-struct proxy_side* proxy_data_get_side(void *data);
+	container_of(proxy_side_data, struct proxy_side, proxy_size_data);
 
 struct proxy_side {
 	void* proxy_side_data;
