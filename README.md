@@ -153,3 +153,29 @@ CONNECTION_FAIL_REASON's:
  - connection refused
  - other
 ```
+
+# Implementation goals
+## Base headers compiling
+Have base headers defined and compiling.
+
+## Implement static proxy as single-threaded
+The static proxy type will be implemented to the point of:
+ * starts up
+ * listens
+ * accepts connections
+ * creates `proxy_connection` and `proxy_side` objects
+ * creates outgoing connections
+ * does `epoll_ctl` manipulations
+ * proxies the connections
+
+## Implement static proxy with python connecting callback
+Extend the static proxy, to allow wrapping/extending in python such
+that the `connecting` callback is actioned in python.
+
+## Implement static proxy as multi-threaded
+Implemented the above static proxy goals but with multi-threading,
+specifically leveraging thread local storage (TLS).
+
+## Implement a socks5 proxy in the same iterations as the static proxy
+Follow the above implementation plan starting from using the python
+connecting callback, for a socks5 proxy.
