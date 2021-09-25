@@ -2,7 +2,7 @@
 .DEFAULT_GOAL := default
 
 %.h.ho : %.h
-	./compile_header.sh $(CC) $<
+	../scripts/compile_header.sh $(CC) $<
 
 HEADERS=$(wildcard *.h)
 HEADER_TARGETS=$(patsubst %.h,%.h.ho,$(HEADERS))
