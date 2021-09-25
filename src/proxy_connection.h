@@ -4,7 +4,6 @@
  */
 
 #include "proxy_side.h"
-#include "utils_ptr.h"
 
 #ifndef PROXY_CONNECTION_H
 #define PROXY_CONNECTION_H

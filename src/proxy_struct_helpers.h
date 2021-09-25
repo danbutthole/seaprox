@@ -5,7 +5,6 @@
 
 #include "proxy_connection.h"
 #include "proxy_side.h"
-#include "utils_ptr.h"
 
 #ifndef PROXY_STRUCT_HELPERS_H
 #define PROXY_STRUCT_HELPERS_H

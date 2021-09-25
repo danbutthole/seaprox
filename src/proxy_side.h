@@ -5,8 +5,6 @@
 
 #include <stdint.h>
 
-#include "utils_ptr.h"
-
 #ifndef PROXY_SIDE_H
 #define PROXY_SIDE_H
 
