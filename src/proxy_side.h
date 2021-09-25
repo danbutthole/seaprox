@@ -23,20 +23,31 @@ enum proxy_side_type {
 	DEST,
 };
 
+/**
+ * Function to call on event during CONNECTING state.
+ * See title.
+ * @param[in] side "this" connection side
+ * @param[out] success -errno on error, 0 on done, 1 on more
+ */
 typedef int (*proxy_connecting_fn)(struct proxy_side *side);
+
+/**
+ * Function to call on an epoll event for the side's fd.
+ * See title.
+ * @param[in] side "this" connection side
+ * @param[out] success -errno on error, 0 on success
+ */
 typedef int (*epoll_handler_fn)(struct proxy_side *side, uint32_t events);
 
-#define TO_PROXY_SIDE(proxy_side_data)                                         \
-	container_of(proxy_side_data, struct proxy_side, proxy_size_data);
-
 struct proxy_side {
-	void *proxy_side_data;
-	enum proxy_side_type side;
-	char *description; // like "ipv4[1.2.3.4:3234]
-	int fd;
-	enum proxy_state state;
-	proxy_connecting_fn connecting_callback;
-	epoll_handler_fn epoll_callback;
+	void *proxy_side_data; /*!< Opaque to implementation */
+	enum proxy_side_type side; /*!< Type of this side */
+	char *description; /*!< Like "ipv4[1.2.3.4:3234]" */
+	int fd; /*!< File descriptor for this side */
+	enum proxy_state state; /*!< State of the connection setup */
+	proxy_connecting_fn connecting_callback; /*!< Callback for during
+						   `CONNECTING` */
+	epoll_handler_fn epoll_callback; /*!< Callback for epoll events */
 };
 
 #endif /* PROXY_SIDE_H */

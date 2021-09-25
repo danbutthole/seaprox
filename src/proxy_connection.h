@@ -9,18 +9,10 @@
 #ifndef PROXY_CONNECTION_H
 #define PROXY_CONNECTION_H
 
-struct proxy_connection;
-
-#define TO_PROXY_CONNECTION_FROM_SOURCE(source)                                \
-	container_of(source, struct proxy_connection, source)
-
-#define TO_PROXY_CONNECTION_FROM_DEST(dest)                                    \
-	container_of(dest, struct proxy_connection, dest)
-
 struct proxy_connection {
-	char *description; /* Like "http[<src>-><dst>]" */
-	struct proxy_side *source;
-	struct proxy_side *dest;
+	char *description; /*!<Like "http[<src>-><dst>]" */
+	struct proxy_side *source; /*!< Source side of the connection */
+	struct proxy_side *dest; /*!< Destination side of the connectiond */
 };
 
 #endif /* PROXY_CONNECTION_H */

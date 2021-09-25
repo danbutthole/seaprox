@@ -17,6 +17,7 @@ enum inet_preference {
 
 /**
  * Performs INET and/or INET6 lookup and returns the result.
+ * Read title.
  * @param[in] name name of the host to resolve/lookup
  * @param[in] preference preference of inet versus inet6 addressing
  * @param[in] result where the `struct sockaddr` result is stored
@@ -28,6 +29,7 @@ int resolve(const char *name, enum inet_preference preference,
 
 /**
  * Performs INET lookup and returns the result.
+ * Read title.
  * @param[in] name name of the host to resolve/lookup
  * @param[in] result where the `struct sockaddr` result is stored
  * @param[in] result_len the sockaddr_len of the result
@@ -37,6 +39,7 @@ int resolve_inet(const char *name, struct sockaddr *result, size_t *result_len);
 
 /**
  * Performs INET6 lookup and returns the result.
+ * Read title.
  * @param[in] name name of the host to resolve/lookup
  * @param[in] result where the `struct sockaddr` result is stored
  * @param[in] result_len the sockaddr_len of the result
