@@ -108,6 +108,14 @@ With these pre-defined at invocation time (or compile time), the
 approach will be to simply allocate the structures as arrays. Then
 lookups will simply be linear lookups.
 
+## Built-in proxy type: static
+For distribution, a single proxy type will be implemented and
+available for usage. It is a so-described-and-named `static` proxy.
+That is, it listens for connections on a tcp4 ip/port, and on
+accepting, connects out to a tcp name/port. On connecting out, it
+will prefer ipv6 by default, though will be configurable to prefer
+ipv4 instead.
+
 ## Optionally asynchronous connections
 
 ```
