@@ -36,11 +36,11 @@ int resolve_inet(const char *name, int type, uint16_t port,
 	if (gai_ret < 0 || result == NULL) {
 		ret = -errno;
 	} else {
-		*result = *gai_result->ai_addr;
+		memcpy(result, gai_result->ai_addr, gai_result->ai_addrlen);
+		freeaddrinfo(gai_result);
+		*result_len = gai_result->ai_addrlen;
 		cast = (struct sockaddr_in *)result;
 		cast->sin_port = htons(port);
-		*result_len = gai_result->ai_addrlen;
-		freeaddrinfo(gai_result);
 		ret = 0;
 	}
 
