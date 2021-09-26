@@ -25,7 +25,6 @@ int resolve_inet(const char *name, int type, uint16_t port,
 	struct sockaddr_in *cast = NULL;
 
 	int gai_ret = 0;
-	void *ptr = NULL;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
