@@ -17,7 +17,7 @@ int main(int argc, char **argv)
 {
 	int resolve_ret = 0;
 	struct sockaddr_in result = { 0 };
-	size_t result_len = 0;
+	size_t result_len = sizeof(result);
 	uint8_t *byte_ptr = NULL;
 
 	if (argc < 2) {

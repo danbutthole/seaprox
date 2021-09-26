@@ -15,19 +15,18 @@
 
 #include "resolve.h"
 
-int resolve_inet(const char *name, int type, uint16_t port,
-		 struct sockaddr *result, size_t *result_len)
+static int _resolve_inetX(const char *name, int domain, int type,
+			  struct sockaddr *result, size_t *result_len)
 {
 	int ret = 0;
 
 	struct addrinfo hints = { 0 };
 	struct addrinfo *gai_result = NULL;
-	struct sockaddr_in *cast = NULL;
 
 	int gai_ret = 0;
 
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET;
+	hints.ai_family = domain;
 	hints.ai_socktype = type;
 	hints.ai_flags |= AI_CANONNAME;
 
@@ -35,12 +34,31 @@ int resolve_inet(const char *name, int type, uint16_t port,
 	if (gai_ret < 0 || result == NULL) {
 		ret = -errno;
 	} else {
-		memcpy(result, gai_result->ai_addr, gai_result->ai_addrlen);
+		if (*result_len >= gai_result->ai_addrlen) {
+			memcpy(result, gai_result->ai_addr,
+			       gai_result->ai_addrlen);
+			*result_len = gai_result->ai_addrlen;
+			ret = 0;
+		} else {
+			ret = -ENOSPC;
+			*result_len = 0;
+		}
 		freeaddrinfo(gai_result);
-		*result_len = gai_result->ai_addrlen;
+	}
+
+	return ret;
+}
+
+int resolve_inet(const char *name, int type, uint16_t port,
+		 struct sockaddr *result, size_t *result_len)
+{
+	int ret = 0;
+	struct sockaddr_in *cast = NULL;
+
+	ret = _resolve_inetX(name, AF_INET, type, result, result_len);
+	if (ret == 0) {
 		cast = (struct sockaddr_in *)result;
 		cast->sin_port = htons(port);
-		ret = 0;
 	}
 
 	return ret;
