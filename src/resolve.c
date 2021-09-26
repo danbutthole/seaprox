@@ -89,3 +89,33 @@ int resolve_inet6(const char *name, int type, uint16_t port,
 
 	return ret;
 }
+
+int resolve(const char *name, int type, uint16_t port,
+	    enum inet_preference preference, struct sockaddr *result,
+	    size_t *result_len)
+{
+	int ret = 0;
+	struct sockaddr_in6 *cast = NULL;
+
+	switch (preference) {
+	case RESOLVE_INET:
+		ret = resolve_inet(name, type, port, result, result_len);
+		if (ret) {
+			ret = resolve_inet6(name, type, port, result,
+					    result_len);
+		}
+		break;
+	case RESOLVE_INET6:
+		ret = resolve_inet6(name, type, port, result, result_len);
+		if (ret) {
+			ret = resolve_inet(name, type, port, result,
+					   result_len);
+		}
+		break;
+	default:
+		ret = -EINVAL;
+		break;
+	}
+
+	return ret;
+}

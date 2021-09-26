@@ -13,6 +13,50 @@
 
 #include "resolve.h"
 
+int print_sockaddr_in_in6(struct sockaddr *sa, size_t sa_len)
+{
+	int ret = 0;
+	struct sockaddr_in *cast = NULL;
+	struct sockaddr_in6 *cast6 = NULL;
+	uint8_t *byte_ptr = NULL;
+	uint16_t *word_ptr = NULL;
+
+	switch (sa->sa_family) {
+	case AF_INET:
+		cast = (struct sockaddr_in *)sa;
+		if (sa_len < sizeof(*cast)) {
+			printf("error: sockaddr_in does not fit\n");
+			ret = -1;
+		} else {
+			byte_ptr = (uint8_t *)&(cast->sin_addr.s_addr);
+			printf("%d.%d.%d.%d", (int)byte_ptr[0],
+			       (int)byte_ptr[1], (int)byte_ptr[2],
+			       (int)byte_ptr[3]);
+		}
+		break;
+	case AF_INET6:
+		cast6 = (struct sockaddr_in6 *)sa;
+		if (sa_len < sizeof(*cast6)) {
+			printf("error: sockaddr_in does not fit\n");
+			ret = -1;
+		} else {
+			word_ptr = (uint16_t *)&(cast6->sin6_addr.s6_addr);
+			printf("%04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x",
+			       (int)htons(word_ptr[0]), (int)htons(word_ptr[1]),
+			       (int)htons(word_ptr[2]), (int)htons(word_ptr[3]),
+			       (int)htons(word_ptr[4]), (int)htons(word_ptr[5]),
+			       (int)htons(word_ptr[6]),
+			       (int)htons(word_ptr[7]));
+		}
+		break;
+	default:
+		printf("error: not inet or inet6\n");
+		ret = 0;
+	}
+
+	return ret;
+}
+
 int test_resolve_inet(const char *name)
 {
 	struct sockaddr_in result = { 0 };
@@ -20,8 +64,8 @@ int test_resolve_inet(const char *name)
 	uint8_t *byte_ptr = NULL;
 	int ret = -1;
 
-	int resolve_ret = resolve_inet(name, SOCK_STREAM, TEST_PORT,
-				       (struct sockaddr *)&result, &result_len);
+	int resolve_ret = resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET,
+				  (struct sockaddr *)&result, &result_len);
 	if (resolve_ret < 0) {
 		printf("error: errno: %s\n", strerror(-resolve_ret));
 	} else if (result_len != sizeof(result)) {
@@ -31,10 +75,10 @@ int test_resolve_inet(const char *name)
 		printf("error: incorrect port: %d vs %d",
 		       (int)htons(result.sin_port), TEST_PORT);
 	} else {
-		byte_ptr = (uint8_t *)&(result.sin_addr.s_addr);
-		printf("[%s]: %d.%d.%d.%d\n", name, (int)byte_ptr[0],
-		       (int)byte_ptr[1], (int)byte_ptr[2], (int)byte_ptr[3]);
-		ret = 0;
+		printf("[%s]: ", name);
+		ret = print_sockaddr_in_in6((struct sockaddr *)&result,
+					    result_len);
+		printf("\n");
 	}
 
 	return ret;
@@ -47,9 +91,8 @@ int test_resolve_inet6(const char *name)
 	uint16_t *word_ptr = NULL;
 	int ret = -1;
 
-	int resolve_ret =
-		resolve_inet6(name, SOCK_STREAM, TEST_PORT,
-			      (struct sockaddr *)&result, &result_len);
+	int resolve_ret = resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET6,
+				  (struct sockaddr *)&result, &result_len);
 	if (resolve_ret < 0) {
 		printf("error: errno: %s\n", strerror(-resolve_ret));
 	} else if (result_len != sizeof(result)) {
@@ -59,13 +102,10 @@ int test_resolve_inet6(const char *name)
 		printf("error: incorrect port: %d vs %d",
 		       (int)htons(result.sin6_port), TEST_PORT);
 	} else {
-		word_ptr = (uint16_t *)&(result.sin6_addr.s6_addr);
-		printf("[%s]: %04x:%04x:%04x:%04x:%04x:%04x:%04x:%04x\n", name,
-		       (int)htons(word_ptr[0]), (int)htons(word_ptr[1]),
-		       (int)htons(word_ptr[2]), (int)htons(word_ptr[3]),
-		       (int)htons(word_ptr[4]), (int)htons(word_ptr[5]),
-		       (int)htons(word_ptr[6]), (int)htons(word_ptr[7]));
-		ret = 0;
+		printf("[%s]: ", name);
+		ret = print_sockaddr_in_in6((struct sockaddr *)&result,
+					    result_len);
+		printf("\n");
 	}
 
 	return ret;
