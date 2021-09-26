@@ -15,6 +15,17 @@
 
 #include "resolve.h"
 
+/**
+ * Generic wrapper for `getaddrinfo`.
+ * Takes in name, domain and socket type and returns `struct sockaddr`
+ * @param[in] name name of the host to resolve/lookup
+ * @param[in] domain the domain/family for the address lookup
+ * @param[in] type type of socket for a connection
+ * @param[in] port port number for the service
+ * @param[in] result where the `struct sockaddr` result is stored
+ * @param[in] result_len the sockaddr_len of the result
+ * @param[out] success 0 on success `-errno` on error
+ */
 static int _resolve_inetX(const char *name, int domain, int type,
 			  struct sockaddr *result, size_t *result_len)
 {
@@ -59,6 +70,21 @@ int resolve_inet(const char *name, int type, uint16_t port,
 	if (ret == 0) {
 		cast = (struct sockaddr_in *)result;
 		cast->sin_port = htons(port);
+	}
+
+	return ret;
+}
+
+int resolve_inet6(const char *name, int type, uint16_t port,
+		  struct sockaddr *result, size_t *result_len)
+{
+	int ret = 0;
+	struct sockaddr_in6 *cast = NULL;
+
+	ret = _resolve_inetX(name, AF_INET6, type, result, result_len);
+	if (ret == 0) {
+		cast = (struct sockaddr_in6 *)result;
+		cast->sin6_port = htons(port);
 	}
 
 	return ret;
