@@ -64,8 +64,9 @@ int test_resolve_inet(const char *name)
 	uint8_t *byte_ptr = NULL;
 	int ret = -1;
 
-	int resolve_ret = resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET,
-				  (struct sockaddr *)&result, &result_len);
+	int resolve_ret =
+		seaprox_resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET,
+				(struct sockaddr *)&result, &result_len);
 	if (resolve_ret < 0) {
 		printf("error: errno: %s\n", strerror(-resolve_ret));
 	} else if (result_len != sizeof(result)) {
@@ -91,8 +92,9 @@ int test_resolve_inet6(const char *name)
 	uint16_t *word_ptr = NULL;
 	int ret = -1;
 
-	int resolve_ret = resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET6,
-				  (struct sockaddr *)&result, &result_len);
+	int resolve_ret =
+		seaprox_resolve(name, SOCK_STREAM, TEST_PORT, RESOLVE_INET6,
+				(struct sockaddr *)&result, &result_len);
 	if (resolve_ret < 0) {
 		printf("error: errno: %s\n", strerror(-resolve_ret));
 	} else if (result_len != sizeof(result)) {

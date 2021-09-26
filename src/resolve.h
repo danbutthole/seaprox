@@ -10,7 +10,7 @@
 #ifndef RESOLVE_H
 #define RESOLVE_H
 
-enum inet_preference {
+enum seaprox_inet_preference {
 	RESOLVE_INET,
 	RESOLVE_INET6,
 };
@@ -26,9 +26,9 @@ enum inet_preference {
  * @param[in] result_len the sockaddr_len of the result
  * @param[out] success 0 on success `-errno` on error
  */
-int resolve(const char *name, int type, uint16_t port,
-	    enum inet_preference preference, struct sockaddr *result,
-	    size_t *result_len);
+int seaprox_resolve(const char *name, int type, uint16_t port,
+		    enum seaprox_inet_preference preference,
+		    struct sockaddr *result, size_t *result_len);
 
 /**
  * Performs INET lookup and returns the result.
@@ -40,8 +40,8 @@ int resolve(const char *name, int type, uint16_t port,
  * @param[in] result_len the sockaddr_len of the result
  * @param[out] success 0 on success `-errno` on error
  */
-int resolve_inet(const char *name, int type, uint16_t port,
-		 struct sockaddr *result, size_t *result_len);
+int seaprox_resolve_inet(const char *name, int type, uint16_t port,
+			 struct sockaddr *result, size_t *result_len);
 
 /**
  * Performs INET6 lookup and returns the result.
@@ -53,7 +53,7 @@ int resolve_inet(const char *name, int type, uint16_t port,
  * @param[in] result_len the sockaddr_len of the result
  * @param[out] success 0 on success `-errno` on error
  */
-int resolve_inet6(const char *name, int type, uint16_t port,
-		  struct sockaddr *result, size_t *result_len);
+int seaprox_resolve_inet6(const char *name, int type, uint16_t port,
+			  struct sockaddr *result, size_t *result_len);
 
 #endif /* RESOLVE_H */

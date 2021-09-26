@@ -60,8 +60,8 @@ static int _resolve_inetX(const char *name, int domain, int type,
 	return ret;
 }
 
-int resolve_inet(const char *name, int type, uint16_t port,
-		 struct sockaddr *result, size_t *result_len)
+int seaprox_resolve_inet(const char *name, int type, uint16_t port,
+			 struct sockaddr *result, size_t *result_len)
 {
 	int ret = 0;
 	struct sockaddr_in *cast = NULL;
@@ -75,8 +75,8 @@ int resolve_inet(const char *name, int type, uint16_t port,
 	return ret;
 }
 
-int resolve_inet6(const char *name, int type, uint16_t port,
-		  struct sockaddr *result, size_t *result_len)
+int seaprox_resolve_inet6(const char *name, int type, uint16_t port,
+			  struct sockaddr *result, size_t *result_len)
 {
 	int ret = 0;
 	struct sockaddr_in6 *cast = NULL;
@@ -90,26 +90,28 @@ int resolve_inet6(const char *name, int type, uint16_t port,
 	return ret;
 }
 
-int resolve(const char *name, int type, uint16_t port,
-	    enum inet_preference preference, struct sockaddr *result,
-	    size_t *result_len)
+int seaprox_resolve(const char *name, int type, uint16_t port,
+		    enum seaprox_inet_preference preference,
+		    struct sockaddr *result, size_t *result_len)
 {
 	int ret = 0;
 	struct sockaddr_in6 *cast = NULL;
 
 	switch (preference) {
 	case RESOLVE_INET:
-		ret = resolve_inet(name, type, port, result, result_len);
+		ret = seaprox_resolve_inet(name, type, port, result,
+					   result_len);
 		if (ret) {
-			ret = resolve_inet6(name, type, port, result,
-					    result_len);
+			ret = seaprox_resolve_inet6(name, type, port, result,
+						    result_len);
 		}
 		break;
 	case RESOLVE_INET6:
-		ret = resolve_inet6(name, type, port, result, result_len);
+		ret = seaprox_resolve_inet6(name, type, port, result,
+					    result_len);
 		if (ret) {
-			ret = resolve_inet(name, type, port, result,
-					   result_len);
+			ret = seaprox_resolve_inet(name, type, port, result,
+						   result_len);
 		}
 		break;
 	default:
