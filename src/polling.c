@@ -18,7 +18,7 @@ struct seaprox_poll_context {
 	size_t max_num_listeners; /*!< Maximum number of listeners allowed */
 	size_t max_num_sides; /*!< Maxumum number of sides allowed */
 	int finished; /*!< Flag when set to not zero indicates finished */
-	struct seaprox_proxy_listeners **listeners; /*!< max_num_listeners of
+	struct seaprox_proxy_listener **listeners; /*!< max_num_listeners of
 						         pointers to listeners
 							 */
 	struct seaprox_proxy_side **sides; /*!< max_num_sides of pointers to
@@ -227,6 +227,105 @@ end_error:
 	return ret;
 }
 
+/**
+ * Finds a listener in a poll context.
+ * See title.
+ * @param[in] ctx the poll context haystack.
+ * @param[in] listener the listener needle.
+ * @param[out] found 0, 1 if found.
+ */
+static size_t _find_proxy_listener(struct seaprox_poll_context *ctx,
+				   struct seaprox_proxy_listener *listener)
+{
+	for (size_t i = 0; i < ctx->max_num_listeners; i++) {
+		if (ctx->listeners[i] == listener) {
+			return i;
+		}
+	}
+
+	return ctx->max_num_listeners + 1;
+}
+
+/**
+ * Finds a listener free slot in a poll context.
+ * See title.
+ * @param[in] ctx the poll context haystack.
+ * @param[out] slot number of slot if found free, >ctx->max_num_listerns if
+ * 	       full.
+ */
+static size_t _find_proxy_listener_slot(struct seaprox_poll_context *ctx)
+{
+	for (size_t i = 0; i < ctx->max_num_listeners; i++) {
+		if (ctx->listeners[i] == NULL) {
+			return i;
+		}
+	}
+
+	return ctx->max_num_listeners + 1;
+}
+
+int seaprox_poll_add_proxy(struct seaprox_poll_context *ctx,
+			   struct seaprox_proxy_listener *listener)
+{
+	int ret = 0;
+	int epoll_fd = ctx->fd;
+	int listener_fd = listener->fd;
+	size_t free_slot = ctx->max_num_listeners + 1;
+	struct epoll_event ev = { 0 };
+
+	if (_find_proxy_listener(ctx, listener) < ctx->max_num_sides) {
+		return -EALREADY;
+	}
+
+	free_slot = _find_proxy_listener_slot(ctx);
+	if (free_slot > ctx->max_num_listeners) {
+		return -ENOSPC;
+	}
+
+	ev.events = EPOLLIN;
+	ev.data.fd = listener_fd;
+	ret = epoll_ctl(epoll_fd, EPOLL_CTL_ADD, listener_fd, &ev);
+	if (ret) {
+		ret = -errno;
+		goto end_error;
+	}
+
+	ctx->listeners[free_slot] = listener;
+
+	return 0;
+
+end_error:
+	return ret;
+}
+
+int seaprox_poll_remove_proxy(struct seaprox_poll_context *ctx,
+			      struct seaprox_proxy_listener *listener)
+{
+	int ret = 0;
+	int epoll_fd = ctx->fd;
+	int listener_fd = listener->fd;
+	size_t found_slot = ctx->max_num_listeners + 1;
+	struct epoll_event ev = { 0 };
+
+	found_slot = _find_proxy_listener(ctx, listener);
+	if (found_slot > ctx->max_num_listeners) {
+		return -EBADR;
+	}
+
+	ev.data.fd = listener_fd;
+	ret = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, listener_fd, &ev);
+	if (ret) {
+		ret = -errno;
+		goto end_error;
+	}
+
+	ctx->listeners[found_slot] = NULL;
+
+	return 0;
+
+end_error:
+	return ret;
+}
 /**
  * Finds a side given a file descriptor.
  * Read title.
