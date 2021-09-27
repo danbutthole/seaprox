@@ -17,6 +17,7 @@ struct seaprox_poll_context {
 	int fd; /*!< File descriptor for this poll object */
 	size_t max_num_listeners; /*!< Maximum number of listeners allowed */
 	size_t max_num_sides; /*!< Maxumum number of sides allowed */
+	int finished; /*!< Flag when set to not zero indicates finished */
 	struct seaprox_proxy_listeners **listeners; /*!< max_num_listeners of
 						         pointers to listeners
 							 */
@@ -270,4 +271,20 @@ int seaprox_poll_run_one(struct seaprox_poll_context *ctx)
 
 error_end:
 	return ret;
+}
+
+int seaprox_poll_run(struct seaprox_poll_context *ctx)
+{
+	while (ctx->finished == 0) {
+		seaprox_poll_run_one(ctx);
+	}
+
+	return 0;
+}
+
+int seaprox_poll_finish(struct seaprox_poll_context *ctx)
+{
+	ctx->finished = 1;
+
+	return 0;
 }

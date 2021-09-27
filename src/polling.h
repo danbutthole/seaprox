@@ -101,4 +101,20 @@ int seaprox_poll_remove_proxy(struct seaprox_poll_context *ctx,
  */
 int seaprox_poll_run_one(struct seaprox_poll_context *ctx);
 
+/**
+ * Performs a poll iterations for a given context until finished
+ * See title.
+ * @param[in] ctx `seaprox_poll_context` to "run" on.
+ * @param[out] success 0 for success or -errno on error.
+ */
+int seaprox_poll_run(struct seaprox_poll_context *ctx);
+
+/**
+ * Flags a epoll context to "finish" on next opportunity.
+ * See title.
+ * @param[in] ctx `seaprox_poll_context` to finish.
+ * @param[out] success 0 for success or -errno on error.
+ */
+int seaprox_poll_finish(struct seaprox_poll_context *ctx);
+
 #endif /* POLLING_H */
