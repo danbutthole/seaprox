@@ -22,6 +22,8 @@ struct seaprox_poll_context {
 							 */
 	struct seaprox_proxy_side **sides; /*!< max_num_sides of pointers to
 					        sides */
+	struct epoll_event *events; /*!< max_num_listeners + max_num_sides of
+			          	 `struct epoll_event`s. */
 };
 
 int seaprox_poll_allocate_context(size_t max_num_listeners,
@@ -48,21 +50,29 @@ int seaprox_poll_allocate_context(size_t max_num_listeners,
 	ctx->fd = fd;
 
 	ctx->listeners = calloc(sizeof(ctx->listeners[0]), max_num_listeners);
-	if (ctx->listeners) {
+	if (ctx->listeners == NULL) {
 		ret = -ENOSPC;
 		goto cleanup_ctx;
 	}
 	ctx->max_num_listeners = max_num_listeners;
 
 	ctx->sides = calloc(sizeof(ctx->sides[0]), max_num_sides);
-	if (ctx->sides) {
+	if (ctx->sides == NULL) {
 		ret = -ENOSPC;
 		goto cleanup_ctx_listeners;
 	}
 	ctx->max_num_sides = max_num_sides;
 
+	ctx->events = calloc(sizeof(*(ctx->events)),
+			     max_num_listeners + max_num_sides);
+	if (ctx->events == NULL) {
+		ret = -ENOSPC;
+		goto cleanup_ctx_sides;
+	}
 	return 0;
 
+cleanup_ctx_sides:
+	free(ctx->sides);
 cleanup_ctx_listeners:
 	free(ctx->listeners);
 cleanup_ctx:
@@ -213,5 +223,44 @@ int seaprox_poll_remove_proxy_side(struct seaprox_poll_context *ctx,
 	return 0;
 
 end_error:
+	return ret;
+}
+
+static void _find_side_by_fd(struct seaprox_poll_context *ctx, int fd,
+			     struct seaprox_proxy_side **result)
+{
+	*result = NULL;
+
+	for (size_t i = 0; i < ctx->max_num_sides; i++) {
+		if (ctx->sides[i]->fd == fd) {
+			*result = ctx->sides[i];
+			return;
+		}
+	}
+}
+
+int seaprox_poll_run_one(struct seaprox_poll_context *ctx)
+{
+	int ret = 0;
+	struct seaprox_proxy_side *side = NULL;
+
+	ret = epoll_wait(ctx->fd, ctx->events,
+			 ctx->max_num_listeners + ctx->max_num_sides, 100);
+	if (ret < 0) {
+		ret = -errno;
+		goto error_end;
+	}
+
+	for (int i_event = 0; i_event < ret; i_event++) {
+		side = NULL;
+		_find_side_by_fd(ctx, ctx->events[i_event].data.fd, &side);
+		if (side != NULL && side->poll_callback) {
+			side->poll_callback(side, ctx->events[i_event].events);
+		}
+	}
+
+	return ret;
+
+error_end:
 	return ret;
 }

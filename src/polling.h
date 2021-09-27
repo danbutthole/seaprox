@@ -93,4 +93,12 @@ int seaprox_poll_add_proxy(struct seaprox_poll_context *ctx,
 int seaprox_poll_remove_proxy(struct seaprox_poll_context *ctx,
 			      struct seaprox_proxy_listener *listener);
 
+/**
+ * Performs a single poll iteration for a given context.
+ * See title.
+ * @param[in] ctx `seaprox_poll_context` to "run one" on.
+ * @param[out] num_events number of actioned events or -errno on error.
+ */
+int seaprox_poll_run_one(struct seaprox_poll_context *ctx);
+
 #endif /* POLLING_H */

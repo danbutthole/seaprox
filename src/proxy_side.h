@@ -47,7 +47,7 @@ struct seaprox_proxy_side {
 	seaprox_proxy_connecting_fn connecting_callback; /*!< Callback for
 							      during
 							      `CONNECTING` */
-	seaprox_poll_handler_fn epoll_callback; /*!< Callback for epoll events */
+	seaprox_poll_handler_fn poll_callback; /*!< Callback for poll events */
 };
 
 #endif /* PROXY_SIDE_H */
