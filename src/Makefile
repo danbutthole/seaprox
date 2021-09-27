@@ -22,6 +22,10 @@ TESTS = test_resolve
 doc :
 	doxygen Doxyfile
 
+.PHONE: headers
+headers : \
+	$(HEADER_TARGETS) \
+
 default : \
 	$(HEADER_TARGETS) \
 	$(C_TARGETS) \
