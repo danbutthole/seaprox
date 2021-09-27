@@ -36,3 +36,7 @@ default : \
 .PHONY: clean
 clean :
 	rm -f $(HEADER_TARGETS) $(C_TARGETS) $(TESTS)
+
+.PHONY: clean_headers
+clean_headers :
+	rm -f $(HEADER_TARGETS)
