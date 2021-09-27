@@ -15,10 +15,10 @@ HEADER_TARGETS=$(patsubst %.h,%.h.ho,$(HEADERS))
 C_SOURCES=$(wildcard *.c)
 C_TARGETS=$(patsubst %.c,%.o,$(C_SOURCES))
 
-test_resolve : test_resolve.o resolve.o
-	$(CC) $(LDFLAGS) -o tests/$@ $^
+tests/test_resolve : test_resolve.o resolve.o
+	$(CC) $(LDFLAGS) -o $@ $^
 
-TESTS = test_resolve
+TESTS = tests/test_resolve
 
 .PHONY: doc
 doc :
