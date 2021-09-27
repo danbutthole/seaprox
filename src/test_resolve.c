@@ -51,7 +51,7 @@ int print_sockaddr_in_in6(struct sockaddr *sa, size_t sa_len)
 		break;
 	default:
 		printf("error: not inet or inet6\n");
-		ret = 0;
+		ret = -1;
 	}
 
 	return ret;
