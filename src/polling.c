@@ -101,11 +101,11 @@ static size_t _find_proxy_side(struct seaprox_poll_context *ctx,
 {
 	for (size_t i = 0; i < ctx->max_num_sides; i++) {
 		if (ctx->sides[i] == side) {
-			return 1;
+			return i;
 		}
 	}
 
-	return 0;
+	return ctx->max_num_sides;
 }
 
 /**
@@ -135,7 +135,7 @@ int seaprox_poll_add_proxy_side(struct seaprox_poll_context *ctx,
 	size_t free_slot = ctx->max_num_sides + 1;
 	struct epoll_event ev = { 0 };
 
-	if (_find_proxy_side(ctx, side)) {
+	if (_find_proxy_side(ctx, side) > ctx->max_num_sides) {
 		return -EALREADY;
 	}
 
@@ -153,6 +153,62 @@ int seaprox_poll_add_proxy_side(struct seaprox_poll_context *ctx,
 	}
 
 	ctx->sides[free_slot] = side;
+
+	return 0;
+
+end_error:
+	return ret;
+}
+
+int seaprox_poll_modify_proxy_side(struct seaprox_poll_context *ctx,
+				   struct seaprox_proxy_side *side,
+				   uint32_t events)
+{
+	int ret = 0;
+	int epoll_fd = ctx->fd;
+	int side_fd = side->fd;
+	struct epoll_event ev = { 0 };
+
+	if (_find_proxy_side(ctx, side) > ctx->max_num_sides) {
+		return -EBADR;
+	}
+
+	ev.events = events;
+	ev.data.fd = side_fd;
+	ret = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, side_fd, &ev);
+	if (ret) {
+		ret = -errno;
+		goto end_error;
+	}
+
+	return 0;
+
+end_error:
+	return ret;
+}
+
+int seaprox_poll_remove_proxy_side(struct seaprox_poll_context *ctx,
+				   struct seaprox_proxy_side *side)
+{
+	int ret = 0;
+	int epoll_fd = ctx->fd;
+	int side_fd = side->fd;
+	size_t found_slot = ctx->max_num_sides + 1;
+	struct epoll_event ev = { 0 };
+
+	found_slot = _find_proxy_side(ctx, side);
+	if (found_slot > ctx->max_num_sides) {
+		return -EBADR;
+	}
+
+	ev.data.fd = side_fd;
+	ret = epoll_ctl(epoll_fd, EPOLL_CTL_DEL, side_fd, &ev);
+	if (ret) {
+		ret = -errno;
+		goto end_error;
+	}
+
+	ctx->sides[found_slot] = NULL;
 
 	return 0;
 
