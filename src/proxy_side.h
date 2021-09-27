@@ -38,7 +38,7 @@ typedef int (*seaprox_proxy_connecting_fn)(struct seaprox_proxy_side *side);
 typedef int (*seaprox_poll_handler_fn)(struct seaprox_proxy_side *side,
 				       uint32_t events);
 
-struct proxy_side {
+struct seaprox_proxy_side {
 	void *proxy_side_data; /*!< Opaque to implementation */
 	enum seaprox_proxy_side_type side; /*!< Type of this side */
 	char *description; /*!< Like "ipv4[1.2.3.4:3234]" */
