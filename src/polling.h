@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+#include <stddef.h>
+
 #include "proxy.h"
 #include "proxy_side.h"
 
@@ -14,9 +16,14 @@ struct seaprox_poll_context;
 /**
  * Allocates and returns a `poll_context` object.
  * See title, and `seaprox_poll_deallocate_context`.
- * @param[out] ctx returned pointer to poll context, or NULL if error.
+ * @param[in] max_num_listeners maximum allowed number of proxy listeners
+ * @param[in] max_num_sides maximum allowed number of proxy sides
+ * @param[in] result returned pointer to poll context, or NULL if error.
+ * @param[out] success 0 if success, -errno if error;
  */
-struct seaprox_poll_context *seaprox_poll_allocate_context(void);
+int seaprox_poll_allocate_context(size_t max_num_listeners,
+				  size_t max_num_sides,
+				  struct seaprox_poll_context **result);
 
 /**
  * Deallocates/frees `poll_context` object.
