@@ -226,6 +226,13 @@ end_error:
 	return ret;
 }
 
+/**
+ * Finds a side given a file descriptor.
+ * Read title.
+ * @param[in] ctx context for the haystack
+ * @param[in] fd file descriptor needle
+ * @param[in] result pointer to store the result; found side or NULL
+ */
 static void _find_side_by_fd(struct seaprox_poll_context *ctx, int fd,
 			     struct seaprox_proxy_side **result)
 {
