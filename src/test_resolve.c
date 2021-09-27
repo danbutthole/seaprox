@@ -61,7 +61,6 @@ int test_resolve_inet(const char *name)
 {
 	struct sockaddr_in result = { 0 };
 	size_t result_len = sizeof(result);
-	uint8_t *byte_ptr = NULL;
 	int ret = -1;
 
 	int resolve_ret =
@@ -89,7 +88,6 @@ int test_resolve_inet6(const char *name)
 {
 	struct sockaddr_in6 result = { 0 };
 	size_t result_len = sizeof(result);
-	uint16_t *word_ptr = NULL;
 	int ret = -1;
 
 	int resolve_ret =

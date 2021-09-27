@@ -4,7 +4,7 @@ BAD_LINT=0
 
 for x in src/*.{c,h}
 do
-	LINES=$(clang-format --output-replacements-xml --sort-includes "${x}" | wc -l)
+	LINES=$(clang-format --output-replacements-xml --Werror --sort-includes "${x}" | wc -l)
 	if ((LINES > 3))
 	then
 		echo bad lint: ${x}

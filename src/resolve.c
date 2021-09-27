@@ -95,7 +95,6 @@ int seaprox_resolve(const char *name, int type, uint16_t port,
 		    struct sockaddr *result, size_t *result_len)
 {
 	int ret = 0;
-	struct sockaddr_in6 *cast = NULL;
 
 	switch (preference) {
 	case RESOLVE_INET:

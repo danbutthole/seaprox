@@ -1,11 +1,13 @@
 
 .DEFAULT_GOAL := default
 
+PROJECT_CFLAGS=-Wall -Werror
+
 %.h.ho : %.h
 	../scripts/compile_header.sh $(CC) $<
 
 %.o : %.c
-	$(CC) $(CFLAGS) -c -o $@ $<
+	$(CC) $(PROJECT_CFLAGS) $(CFLAGS) -c -o $@ $<
 
 HEADERS=$(wildcard *.h)
 HEADER_TARGETS=$(patsubst %.h,%.h.ho,$(HEADERS))
