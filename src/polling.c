@@ -116,7 +116,7 @@ static size_t _find_proxy_side(struct seaprox_poll_context *ctx,
 		}
 	}
 
-	return ctx->max_num_sides;
+	return ctx->max_num_sides + 1;
 }
 
 /**
@@ -146,7 +146,7 @@ int seaprox_poll_add_proxy_side(struct seaprox_poll_context *ctx,
 	size_t free_slot = ctx->max_num_sides + 1;
 	struct epoll_event ev = { 0 };
 
-	if (_find_proxy_side(ctx, side) > ctx->max_num_sides) {
+	if (_find_proxy_side(ctx, side) < ctx->max_num_sides) {
 		return -EALREADY;
 	}
 
